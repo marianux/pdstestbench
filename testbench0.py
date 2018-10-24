@@ -128,7 +128,7 @@ def my_testbench( sig_type ):
 ## tipo de variable diccionario. Puedo crearlo iniciándolo mediante CONSTANTES
 
 #sig_props = { 'tipo': 'senoidal', 
-#              'frecuencia': (3, 10, 20), # Uso de tuplas para las frecuencias 
+#              'frecuencia': (3, 6, 9), # Uso de tuplas para las frecuencias 
 #              'amplitud':   (1, 1,  1),
 #              'fase':       (0, 0,  0)
 #             } 
