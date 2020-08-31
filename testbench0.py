@@ -127,14 +127,14 @@ def my_testbench( sig_type ):
 
 ## tipo de variable diccionario. Puedo crearlo iniciándolo mediante CONSTANTES
 
-#sig_props = { 'tipo': 'senoidal', 
-#              'frecuencia': (3, 6, 9), # Uso de tuplas para las frecuencias 
-#              'amplitud':   (1, 1,  1),
-#              'fase':       (0, 0,  0)
+# sig_props = { 'tipo': 'senoidal', 
+#               'frecuencia': (3, 6, 9), # Uso de tuplas para las frecuencias 
+#               'amplitud':   (1, 1,  1),
+#               'fase':       (0, 0,  0)
 #             } 
-## Como también puedo agregar un campo descripción de manera programática
-## este tipo de sintaxis es *MUY* de Python
-#sig_props['descripcion'] = [ str(a_freq) + ' Hz' for a_freq in sig_props['frecuencia'] ]
+# # Como también puedo agregar un campo descripción de manera programática
+# # este tipo de sintaxis es *MUY* de Python
+# sig_props['descripcion'] = [ str(a_freq) + ' Hz' for a_freq in sig_props['frecuencia'] ]
 
 # Usar CTRL+1 para comentar o descomentar el bloque de abajo.
 sig_props = { 'tipo': 'ruido', 
