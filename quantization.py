@@ -3,7 +3,13 @@
 """
 Created on Wed Aug 26 20:44:40 2020
 
-@author: mariano
+@author: Mariano Llamedo Soria llamedom@frba.utn.edu.ar
+
+Simulamos el comportamiento del ruido de cuantización que podemos encontrar
+en un conversor analógico digital (ADC) de B bits. Comparamos las estimaciones
+de sus estadísticos con las que deberían tener según la distribución de 
+sus valores (uniforme). Visualizamos algunos resultados, como también
+el histograma de la señal de ruido.
 """
 
 import numpy as np
