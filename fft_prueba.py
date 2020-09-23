@@ -10,8 +10,7 @@ computacionalmente eficiente de la transformada discreta de Fourier, o DFT.
 """
 import numpy as np
 import matplotlib.pyplot as plt
-from numpy.fft import fft
-from pdsmodulos import print_markdown, print_subtitle
+from scipy.fftpack import fft
 
 
 N = 1000
@@ -27,22 +26,21 @@ f0 = N/4 * Fs/N
 
 # dd = np.sin(2*np.pi*f0*tt)
 # dd = np.random.uniform(-np.sqrt(12)/2, +np.sqrt(12)/2, size = [N,canales_ADC])
-# dd = np.random.normal(0, 1.0, size = [N,canales_ADC])
+dd = np.random.normal(0, 1.0, size = [N,canales_ADC])
 
-DD = fft( dd )
+bfrec = ff <= Fs/2
 
-print_subtitle('Teorema de Parseval')
+ft_dd = fft( dd, axis = 0 )
 
 plt.close('all')
 
 plt.figure(1)
-plt.plot( ff, np.abs(DD) )
+plt.plot( ff[bfrec], np.abs(ft_dd[bfrec]) )
 plt.ylabel('Módulo [¿Volts?]')
 plt.xlabel('Frecuencia [Hz]')
 
 plt.figure(2)
-plt.plot( ff, np.abs(DD)**2 )
+plt.plot( ff[bfrec], np.abs(ft_dd[bfrec])**2 )
 plt.ylabel('Densidad de Potencia [¿W/Hz?]')
 plt.xlabel('Frecuencia [Hz]')
-
 
