@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Sep  3 17:52:18 2020
-
 @author: Mariano Llamedo Soria llamedom@frba.utn.edu.ar
 
-En este script demostramos el uso de la FFT, es decir de la implementación
-computacionalmente eficiente de la transformada discreta de Fourier, o DFT.
+En este script demostramos el uso de ventanas para el análisis espectral.
 """
+
 import numpy as np
+import scipy.signal.windows as win
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft
 
@@ -24,9 +23,7 @@ canales_ADC = 1
 a0 = 1 # Volt
 f0 = N/4 * Fs/N
 
-# dd = np.sin(2*np.pi*f0*tt)
-# dd = np.random.uniform(-np.sqrt(12)/2, +np.sqrt(12)/2, size = [N,canales_ADC])
-dd = np.random.normal(0, 1.0, size = [N, canales_ADC])
+dd = win.blackman(N)
 
 bfrec = ff <= Fs/2
 
@@ -35,13 +32,14 @@ ft_dd = fft( dd )
 
 plt.close('all')
 
-plt.figure(1)
+plt.figure(2)
 plt.plot( ff[bfrec], np.abs(ft_dd[bfrec]) )
+# plt.plot( ff[bfrec], 20*np.log10(np.abs(ft_dd[bfrec])) )
 plt.ylabel('Módulo [¿Volts?]')
 plt.xlabel('Frecuencia [Hz]')
 
-plt.figure(2)
-plt.plot( ff[bfrec], np.abs(ft_dd[bfrec])**2 )
-plt.ylabel('Densidad de Potencia [¿W/Hz?]')
-plt.xlabel('Frecuencia [Hz]')
+plt.figure(1)
+plt.plot( tt, dd )
+plt.ylabel('#')
+plt.xlabel('t [s]')
 
