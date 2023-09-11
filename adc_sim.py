@@ -35,54 +35,70 @@ N = 1000   # cantidad de muestras
 R = 10 # realizaciones o experimentos
 
 # cantidad de veces más densa que se supone la grilla temporal para tiempo "continuo"
-over_sampling = 4
+over_sampling = 32
 N_os = N*over_sampling
 
 # Datos del ADC
-B = 6 # bits
-Vf = 2 # Volts
-q = Vf/2**B # Volts
+B = 16 # bits
+Vf = 2 # rango simétrico de +/- Vf Volts
+q = Vf/2**(B-1) # paso de cuantización de q Volts
 
 # datos del ruido
-kn = 1/20
+kn = 1/5
 pot_ruido = q**2/12 * kn # Watts (potencia de la señal 1 W)
 
 ts = 1/fs # tiempo de muestreo
 df = fs/N # resolución espectral
 
-# Filtro para el diezmado
-fstop = 1/over_sampling * 1/2# 
+#%% Diseño del filtro de diezmado
 
-# FIR tipo 2 -> zero en Nyquist
-cant_coef = 52 # tiene que ser par
-cant_coef = cant_coef + cant_coef%2 # fuerzo que sea el siguiente par 
+# FIR Tipo 2 fuerzo cant_coef par
+cant_coef = 500
 antisymmetric = False
 
-frecs = [0.0,  fstop,  1.0]
-gains = [0,   -np.inf, -np.inf] # forzamos brickwall dB
+fpass = 1/over_sampling # 
+fstop = np.min([fpass+0.15, 0.8]) # Hz
+ripple = 0.5 # dB
+attenuation = 40 # dB
+
+# pasa bajo
+frecs = [0.0,  fpass,       fstop,         1.0]
+# la mitad de la att porque usaremos filtfilt
+gains = [0,   -ripple/2, -attenuation/2,  -np.inf] # dB
 
 gains = 10**(np.array(gains)/20)
 
-num = sig.firwin2(cant_coef, frecs, gains , window='blackmanharris', antisymmetric=antisymmetric  )
+# algunas ventanas para evaluar
+#win_name = 'boxcar'
+#win_name = 'hamming'
+win_name = 'blackmanharris'
+#win_name = 'flattop'
+
+
+# FIR design
+num = sig.firwin2(cant_coef, frecs, gains, window=win_name, antisymmetric=antisymmetric  )
 den = 1.0
 
 
-wrad, hh = sig.freqz(num, den)
-ww = wrad / np.pi
+# Análisis del filtro
+# wrad, hh = sig.freqz(num, den)
+# ww = wrad / np.pi
 
-plt.figure(4)
+# plt.figure(3)
 
-plt.plot(ww, 20 * np.log10(abs(hh)))
+# plt.plot(ww, 20 * np.log10(abs(hh)))
 
-plt.title('FIR designed by window method')
-plt.xlabel('Frequencia normalizada')
-plt.ylabel('Modulo [dB]')
-plt.grid(which='both', axis='both')
+# plot_plantilla(filter_type = 'lowpass' , fpass = fpass, ripple = ripple , fstop = fstop, attenuation = attenuation, fs = fs)
 
-plt.show()
+# plt.title('FIR designed by window method')
+# plt.xlabel('Frequencia normalizada')
+# plt.ylabel('Modulo [dB]')
+# plt.grid(which='both', axis='both')
 
+# axes_hdl = plt.gca()
+# axes_hdl.legend()
 
-
+# plt.show()
 
 #%% Acá arranca la simulación
 
@@ -92,13 +108,14 @@ tt_os = np.linspace(0, (N-1)*ts, N_os)
 
 # grilla de sampleo frecuencial
 ff = np.linspace(0, (N-1)*df, N)
-ff_os = np.linspace(0, (N-1)*df, N_os)
+ff_os = np.linspace(0, (N_os-1)*df, N_os)
 
 # Concatenación de matrices:
 # guardaremos las señales creadas al ir poblando la siguiente matriz vacía
 
-analog_sig = np.sin( 2*np.pi*1*df*tt_os )
+analog_sig = np.sin( 2*np.pi*250*df*tt_os )
 
+# normalizo en potencia
 analog_sig = analog_sig / np.sqrt(np.var(analog_sig))
 
 nq = np.zeros((N_os,R))
@@ -147,13 +164,15 @@ plt.show()
 
 
 plt.figure(2)
-ft_SR = 1/N*np.fft.fft( sr, axis = 0 )
-ft_Srq = 1/N*np.fft.fft( srq, axis = 0 )
-ft_As = 1/N*np.fft.fft( analog_sig, axis = 0)
-ft_Nq = 1/N*np.fft.fft( nq, axis = 0 )
-ft_Nn = 1/N*np.fft.fft( nn, axis = 0 )
+ft_SR = 1/N_os*np.fft.fft( sr, axis = 0 )
+ft_Srq = 1/N_os*np.fft.fft( srq, axis = 0 )
+ft_As = 1/N_os*np.fft.fft( analog_sig, axis = 0)
+ft_Nq = 1/N_os*np.fft.fft( nq, axis = 0 )
+ft_Nn = 1/N_os*np.fft.fft( nn, axis = 0 )
+bfrec_os = ff_os <= fs/2 * over_sampling
 bfrec = ff <= fs/2
-bfrec_os = ff_os <= fs/2
+
+
 
 Nnq_mean = np.mean(np.mean(np.abs(ft_Nq)**2, axis=1))
 nNn_mean = np.mean(np.abs(ft_Nn)**2)

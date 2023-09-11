@@ -35,7 +35,7 @@ N = 1000   # cantidad de muestras
 R = 10 # realizaciones o experimentos
 
 # cantidad de veces más densa que se supone la grilla temporal para tiempo "continuo"
-over_sampling = 16
+over_sampling = 32
 N_os = N*over_sampling
 
 # Datos del ADC
