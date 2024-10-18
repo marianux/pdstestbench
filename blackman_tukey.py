@@ -18,7 +18,10 @@ import scipy.signal as sig
 
 def blackman_tukey(x,  M = None):    
     
-    N = len(x)
+    # N = len(x)
+    x_z = x.shape
+    
+    N = np.max(x_z)
     
     if M is None:
         M = N//5
@@ -34,6 +37,8 @@ def blackman_tukey(x,  M = None):
 
     Px = np.abs(np.fft.fft(r * sig.windows.blackman(r_len), n = N) )
 
+    Px = Px.reshape(x_z)
+
     return Px;
 
 
@@ -45,7 +50,7 @@ ts = 1/fs # tiempo de muestreo
 df = fs/N # resolución espectral
 
 # Cantidad de zero-padding, expande la secuencia con (cant_pad-1) ceros.
-cant_pad = 10
+cant_pad = 1
 
 #%% Acá arranca la simulación
 
@@ -88,12 +93,12 @@ for ii in f0:
     ff_pad = np.linspace(0, (N_pad-1)*df_pad, N_pad)
 
     # Potencia unitaria
-    # xx_pad = xx_pad / np.sqrt(np.var(xx_pad, axis=0))
+    xx_pad = xx_pad / np.sqrt(np.var(xx_pad, axis=0))
     
     # Max. PSD a 0 dB (unitario)
     # El kernel de Dirich. tiene un valor de (N/N_pad) en su lóbulo central.
     # entonces lo compensamos para que de 1.
-    xx_pad = xx_pad * N_pad / N
+    # xx_pad = xx_pad * N_pad / N
 
     # # Energía unitaria
     # xx = xx / np.sqrt(np.sum(xx**2, axis=0))
@@ -102,36 +107,35 @@ for ii in f0:
     #%% Presentación gráfica de los resultados
     
     plt.figure()
-    ft_XX_pad = 1/N_pad*np.fft.fft( xx_pad, axis = 0 )
-    ft_XX = blackman_tukey( xx, N//5 )
+    ft_XX_pdg = 1/N_pad*np.fft.fft( xx, axis = 0 )
+    ft_XX_bt = blackman_tukey( xx, N//5 )
+    ff_wl, ft_XX_wl = sig.welch( xx, nperseg = N//5, axis = 0 )
+    
     bfrec = ff <= fs/2
     bfrec_pad = ff_pad <= fs/2
     
     # Potencia total
-    xx_pot = np.sum(np.abs(ft_XX)**2, axis = 0)
-    xx_pot_pad = np.sum(np.abs(ft_XX_pad)**2, axis = 0)
+    xx_pot_pdg = np.sum(np.abs(ft_XX_pdg)**2, axis = 0)
+    xx_pot_bt = np.sum(np.abs(ft_XX_bt)**2, axis = 0)
+    xx_pot_wl = np.sum(np.abs(ft_XX_wl)**2, axis = 0)
     
     # ventana duplicadora
     ww = np.vstack((1, 2*np.ones((N//2-1,1)) ,1))
     ww_pad = np.vstack((1, 2*np.ones((N_pad//2-1,1)) ,1))
     
-    plt.plot( ff[bfrec], 10* np.log10(ww * np.abs(ft_XX[bfrec,:])**2 + 1e-10), ls='dotted', marker='o' )
-    plt.plot( ff_pad[bfrec_pad], 10* np.log10(ww_pad * np.abs(ft_XX_pad[bfrec_pad,:])**2 + 1e-10), ls='dotted', marker='x' )
+    plt.plot( ff[bfrec], 10* np.log10(ww * np.abs(ft_XX_pdg[bfrec,:])**2 + 1e-10), ls='dotted', marker='o', label = f'Per. $\sigma^2 = $ {xx_pot_pdg[0]:3.3}' )
+    plt.plot( ff[bfrec], 10* np.log10(ww * np.abs(ft_XX_bt[bfrec,:])**2 + 1e-10), ls='dotted', marker='o', label = f'BT $\sigma^2 = $ {xx_pot_bt[0]:3.3}' )
+    plt.plot( ff_wl * fs,     10* np.log10( np.abs(ft_XX_wl)**2 + 1e-10), ls='dotted', marker='o', label = f'Welch $\sigma^2 = $ {xx_pot_wl[0]:3.3}' )
+    # plt.plot( ff_pad[bfrec_pad], 10* np.log10(ww_pad * np.abs(ft_XX_pdg[bfrec_pad,:])**2 + 1e-10), ls='dotted', marker='x', label = f'$\sigma^2 = $ {xx_pot[0]:3.3}'  )
      
     # plt.title('Señal muestreada por un ADC de {:d} bits - $\pm V_R= $ {:3.1f} V - q = {:3.3f} V'.format(B, Vf, q) )
     plt.ylabel('Densidad de Potencia [dB]')
     plt.xlabel('Frecuencia [Hz]')
     plt.title('PSD de una senoidal con diferentes desintonías')
     axes_hdl = plt.gca()
-    axes_hdl.legend([
-        'No leak $\sigma^2 = {:3.3f}$'.format(xx_pot[0]), 
-        'mid leak $\sigma^2 = {:3.3f}$'.format(xx_pot[1]), 
-        'max leak $\sigma^2 = {:3.3f}$'.format(xx_pot[2]),
-        'No leak $\sigma^2 = {:3.3f}$'.format(xx_pot_pad[0]), 
-        'mid leak $\sigma^2 = {:3.3f}$'.format(xx_pot_pad[1]), 
-        'max leak $\sigma^2 = {:3.3f}$'.format(xx_pot_pad[2])
-        ])
+    axes_hdl.legend()
+
     # suponiendo valores negativos de potencia ruido en dB
-    plt.ylim((-80, 5))
+    # plt.ylim((-80, 5))
 
 
