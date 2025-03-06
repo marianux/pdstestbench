@@ -39,7 +39,7 @@ R = 1 # realizaciones o experimentos
 filter_size = 300
 
 # cantidad de veces más densa que se supone la grilla temporal para tiempo "continuo"
-over_sampling = 32
+over_sampling = 4
 N_os = N*over_sampling
 
 # Datos del ADC
@@ -48,7 +48,7 @@ Vf = 2 # rango simétrico de +/- Vf Volts
 q = Vf/2**(B-1) # paso de cuantización de q Volts
 
 # datos del ruido
-kn = 1/5
+kn = 20
 pot_ruido = q**2/12 * kn # Watts (potencia de la señal 1 W)
 
 ts = 1/fs # tiempo de muestreo

@@ -73,7 +73,7 @@ def my_testbench( sig_type ):
 
     # Concatenación de matrices:
     # guardaremos las señales creadas al ir poblando la siguiente matriz vacía
-    x = np.array([], dtype=np.float).reshape(N,0)
+    x = np.array([], dtype=float).reshape(N,0)
     ii = 0
     
     # estructuras de control de flujo
@@ -100,8 +100,8 @@ def my_testbench( sig_type ):
         # Podemos agregar algún dato extra a la descripción de forma programática
         # {0:.3f} significa 0: primer argunmento de format
         # .3f formato flotante, con 3 decimales
-        # $ ... $ indicamos que incluiremos sintaxis LaTex: $\hat{{\sigma}}^2$
-        sig_props['descripcion'] = [ sig_props['descripcion'][ii] + ' - $\hat{{\sigma}}^2$ :{0:.3f}'.format( np.var(x[:,ii]))  for ii in range(0,len(sig_props['descripcion'])) ]
+        # $ ... $ indicamos que incluiremos sintaxis LaTex: $\\hat{{\sigma}}^2$
+        sig_props['descripcion'] = [ sig_props['descripcion'][ii] + ' - $\\hat{{\\sigma}}^2$ :{0:.3f}'.format( np.var(x[:,ii]))  for ii in range(0,len(sig_props['descripcion'])) ]
     
     else:
         
@@ -164,7 +164,7 @@ elif args.signal_type == 'ruido':
     sig_props = { 'tipo': 'ruido', 
                   'varianza': (1, 1, 1) # Uso de tuplas para las frecuencias 
                  } 
-    sig_props['descripcion'] = [ '$\sigma^2$ = ' + str(a_var) for a_var in sig_props['varianza'] ]
+    sig_props['descripcion'] = [ '$\\sigma^2$ = ' + str(a_var) for a_var in sig_props['varianza'] ]
 
 else:
 
