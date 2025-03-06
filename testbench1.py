@@ -174,5 +174,6 @@ else:
 # Invocamos a nuestro testbench exclusivamente: 
 my_testbench( sig_props )
 exit(0)
+exit(0)
     
 
