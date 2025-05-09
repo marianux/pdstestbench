@@ -18,30 +18,48 @@ def vertical_flaten(a):
 
     return a.reshape(a.shape[0],1)
 
+#%%
+
 ##################
 # Lectura de ECG #
 ##################
 
 fs_ecg = 1000 # Hz
 
+##################
+## ECG con ruido
+##################
+
 # para listar las variables que hay en el archivo
 #io.whosmat('ECG_TP4.mat')
-mat_struct = sio.loadmat('./ECG_TP4.mat')
+# mat_struct = sio.loadmat('./ECG_TP4.mat')
 
-ecg_one_lead = vertical_flaten(mat_struct['ecg_lead'])
-N = len(ecg_one_lead)
+# ecg_one_lead = vertical_flaten(mat_struct['ecg_lead'])
+# N = len(ecg_one_lead)
 
-hb_1 = vertical_flaten(mat_struct['heartbeat_pattern1'])
-hb_2 = vertical_flaten(mat_struct['heartbeat_pattern2'])
+# hb_1 = vertical_flaten(mat_struct['heartbeat_pattern1'])
+# hb_2 = vertical_flaten(mat_struct['heartbeat_pattern2'])
+
+# plt.figure()
+# plt.plot(ecg_one_lead[5000:12000])
+
+# plt.figure()
+# plt.plot(hb_1)
+
+# plt.figure()
+# plt.plot(hb_2)
+
+##################
+## ECG sin ruido
+##################
+
+ecg_one_lead = np.load('ecg_sin_ruido.npy')
 
 plt.figure()
-plt.plot(ecg_one_lead[5000:12000])
+plt.plot(ecg_one_lead)
 
-plt.figure()
-plt.plot(hb_1)
 
-plt.figure()
-plt.plot(hb_2)
+#%%
 
 ####################################
 # Lectura de pletismografía (PPG)  #
@@ -49,11 +67,25 @@ plt.plot(hb_2)
 
 fs_ppg = 400 # Hz
 
-# Cargar el archivo CSV como un array de NumPy
-ppg = np.genfromtxt('PPG.csv', delimiter=',', skip_header=1)  # Omitir la cabecera si existe
+##################
+## PPG con ruido
+##################
+
+# # Cargar el archivo CSV como un array de NumPy
+# ppg = np.genfromtxt('PPG.csv', delimiter=',', skip_header=1)  # Omitir la cabecera si existe
+
+
+##################
+## PPG sin ruido
+##################
+
+ppg = np.load('ppg_sin_ruido.npy')
 
 plt.figure()
 plt.plot(ppg)
+
+
+#%%
 
 ####################
 # Lectura de audio #
