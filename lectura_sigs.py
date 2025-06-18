@@ -14,9 +14,6 @@ import matplotlib.pyplot as plt
 import scipy.io as sio
 from scipy.io.wavfile import write
 
-def vertical_flaten(a):
-
-    return a.reshape(a.shape[0],1)
 
 #%%
 
@@ -34,11 +31,11 @@ fs_ecg = 1000 # Hz
 #io.whosmat('ECG_TP4.mat')
 # mat_struct = sio.loadmat('./ECG_TP4.mat')
 
-# ecg_one_lead = vertical_flaten(mat_struct['ecg_lead'])
+# ecg_one_lead = mat_struct['ecg_lead']
 # N = len(ecg_one_lead)
 
-# hb_1 = vertical_flaten(mat_struct['heartbeat_pattern1'])
-# hb_2 = vertical_flaten(mat_struct['heartbeat_pattern2'])
+# hb_1 = mat_struct['heartbeat_pattern1']
+# hb_2 = mat_struct['heartbeat_pattern2']
 
 # plt.figure()
 # plt.plot(ecg_one_lead[5000:12000])
