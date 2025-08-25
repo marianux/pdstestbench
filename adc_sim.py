@@ -67,10 +67,16 @@ aprox_name = 'butter'
 filter_type = 'lowpass'
 
 ftran = 0.1
-fstop = np.min([1/over_sampling + ftran/2, 1/over_sampling * 5/4])  #
+# fstop = np.min([1/over_sampling + ftran/2, 1/over_sampling * 5/4])  #
 
-fpass = np.max([fstop - ftran/2, fstop * 3/4]) # 
+# fpass = np.max([fstop - ftran/2, fstop * 3/4]) # 
+
+fstop = 1/over_sampling  #
+
+fpass = fstop - ftran # 
+
 ripple = 0.5 # dB
+
 attenuation = 40 # dB
 
 # como usaremos filtrado bidireccional, alteramos las restricciones para
